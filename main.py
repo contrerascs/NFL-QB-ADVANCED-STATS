@@ -1,6 +1,21 @@
 import streamlit as st
-from helpers.data_loader import load_datasets
+from helpers.data_loader import load_dataset
+from components.qb_comparison import display_qb_comparison
+from components.sidebar import render_sidebar
 
-qb_complete_df = load_datasets()
+# Configuración inicial de Streamlit
+st.set_page_config(
+    page_title='QB vs QB',
+    page_icon=':football:',
+    layout='wide',
+    initial_sidebar_state='expanded',
+)
 
-print(qb_complete_df["Player"].unique())
+df = load_dataset()
+
+selected_qbs = render_sidebar(df)
+
+if len(selected_qbs) == 2:
+    display_qb_comparison(df[df["Player"].isin(selected_qbs)], selected_qbs)
+else:
+    st.warning("⚠️ Por favor selecciona exactamente 2 jugadores.")

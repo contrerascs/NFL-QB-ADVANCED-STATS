@@ -1,4 +1,6 @@
 /data/data_txt/
 /data/data_csv/
-/app/__pycache__/
+/components/__pycache__/
+/pages/__pycache__/
 /helpers/__pycache__/
+/data/images/
