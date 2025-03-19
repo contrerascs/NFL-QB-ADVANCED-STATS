@@ -10,7 +10,7 @@ def render_player_info(qb_id):
     st.image(image_path, width=150)
 
 def render_teams_info(qb_id, qb_data, name):
-    st.subheader(":gray[Quarterback]", divider="gray")
+    st.subheader(":gray[Player]", divider="gray")
     st.text(name)
     st.subheader(":gray[Teams]", divider="gray")
     for team in teams(qb_id, qb_data):
@@ -33,8 +33,7 @@ def display_qb_comparison(qb_data, selected_qbs):
             render_teams_info(qb1_id,qb1_data,qb1)
 
         with col3:
-            #st.image('data/ejemplo.png', use_container_width=True)
-            pass
+            st.image('assets/versus.png', use_container_width=True)
 
         with col4:
             qb2_data = qb_data[qb_data["Player"] == qb2]

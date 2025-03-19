@@ -13,7 +13,7 @@ st.set_page_config(
 
 df = load_dataset()
 
-selected_qbs = render_sidebar(df)
+selected_qbs,selected_season = render_sidebar(df)
 
 if len(selected_qbs) == 2:
     display_qb_comparison(df[df["Player"].isin(selected_qbs)], selected_qbs)
