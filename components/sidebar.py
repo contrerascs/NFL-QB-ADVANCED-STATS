@@ -16,6 +16,5 @@ def render_sidebar(df):
 
         # Selección de temporadas
         selected_season = st.multiselect('Selecciona las temporadas a comparar', season_list)
-        print(selected_qbs,selected_season)
 
     return selected_qbs,selected_season

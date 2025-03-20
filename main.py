@@ -15,7 +15,10 @@ df = load_dataset()
 
 selected_qbs,selected_season = render_sidebar(df)
 
+df_season = df[df['Season'] == selected_season[0]]
+print(df_season)
+
 if len(selected_qbs) == 2:
-    display_qb_comparison(df[df["Player"].isin(selected_qbs)], selected_qbs)
+    display_qb_comparison(df_season[df_season["Player"].isin(selected_qbs)], selected_qbs)
 else:
     st.warning("⚠️ Por favor selecciona exactamente 2 jugadores.")

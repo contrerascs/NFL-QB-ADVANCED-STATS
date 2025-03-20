@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from helpers.utils import get_image_path
 from helpers.utils import teams
 
@@ -42,3 +43,18 @@ def display_qb_comparison(qb_data, selected_qbs):
 
         with col5:
             render_player_info(qb2_id)
+
+        stats = ["TD", "Yds", "Int", "Cmp%", "Rate", "QBR", "Sk"]
+        stat_labels = ["Touchdowns", "Yardas", "Intercepciones", "% Completos", "Rating", "QBR", "Sacks"]
+        
+        for stat, label in zip(stats, stat_labels):
+            col1, col2, col3 = st.columns([1.5, 2, 1.5])
+            
+            with col1:
+                st.subheader(f"{qb1_data[stat].iloc[0]}")
+            
+            with col2:
+                st.subheader(f"{label}")
+            
+            with col3:
+                st.subheader(f"{qb2_data[stat].iloc[0]}")
