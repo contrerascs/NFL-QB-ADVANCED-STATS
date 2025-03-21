@@ -13,12 +13,22 @@ st.set_page_config(
 
 df = load_dataset()
 
-selected_qbs,selected_season = render_sidebar(df)
+# Capturar selección del usuario
+selected_qb1, selected_qb2, selected_season = render_sidebar(df)
 
-df_season = df[df['Season'] == selected_season[0]]
-print(df_season)
+# Filtrar DataFrame por la temporada seleccionada
+df_season = df[df['Season'] == selected_season]
 
-if len(selected_qbs) == 2:
-    display_qb_comparison(df_season[df_season["Player"].isin(selected_qbs)], selected_qbs)
+# Verificar si los jugadores están en la temporada seleccionada
+qb1_exists = selected_qb1 in df_season['Player'].values
+qb2_exists = selected_qb2 in df_season['Player'].values
+
+if not qb1_exists or not qb2_exists:
+    # Mostrar advertencias si un jugador no jugó en la temporada seleccionada
+    if not qb1_exists:
+        st.warning(f"⚠️ {selected_qb1} not played in season {selected_season}.")
+    if not qb2_exists:
+        st.warning(f"⚠️ {selected_qb2} not played in season {selected_season}.")
 else:
-    st.warning("⚠️ Por favor selecciona exactamente 2 jugadores.")
+    # Mostrar comparación solo si ambos jugadores jugaron en la temporada seleccionada
+    display_qb_comparison(df_season, selected_qb1, selected_qb2)
