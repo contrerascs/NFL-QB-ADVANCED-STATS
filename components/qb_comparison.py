@@ -1,8 +1,10 @@
 import streamlit as st
+import pandas as pd
 
 from helpers.utils import get_image_path
 from helpers.utils import teams
-from components.season_plots import comparative_plots
+from components.season_plots import comparative_plots, plot_radar_chart
+from helpers.utils import normalize, invert_normalize
 
 def render_player_info(qb_id):
     # Renderiza la información del jugador en la barra lateral.
@@ -56,6 +58,55 @@ def qb_rank_in_stat(qb_df, player, stat):
         else:
             st.metric(titulos[stat], f"{stat_value:,}", f"{int(rank)}º",border=True)
 
+def calculate_qb_skills(df):
+    # Calcula las 7 habilidades de los quarterbacks en una escala de 1 a 100.
+    skills = pd.DataFrame()
+    skills['Player'] = df['Player']
+    
+    # Protección del balón (Ball Security)
+    skills['Ball Security'] = (invert_normalize(df['Int']) + 
+                               invert_normalize(df['Int%']) + 
+                               invert_normalize(df['BadTh']) + 
+                               invert_normalize(df['Bad%'])) / 4
+    
+    # Precisión (Accuracy)
+    skills['Accuracy'] = (normalize(df['Cmp%']) + 
+                          normalize(df['OnTgt%']) + 
+                          invert_normalize(df['Drop%'])) / 3
+    
+    # Eficiencia en el pase (Passing Efficiency)
+    skills['Passing Efficiency'] = (normalize(df['Y/A']) + 
+                                    normalize(df['AY/A']) + 
+                                    normalize(df['ANY/A']) + 
+                                    normalize(df['Rate'])) / 4
+    
+    # Juego bajo presión (Pocket Performance)
+    skills['Pocket Performance'] = (invert_normalize(df['Prss%']) + 
+                                    invert_normalize(df['Hrry']) + 
+                                    invert_normalize(df['Hits']) + 
+                                    invert_normalize(df['Sk%'])) / 4
+    
+    # Capacidad de jugadas explosivas (Big Play Ability)
+    skills['Big Plays'] = (normalize(df['IAY']) + 
+                                  normalize(df['IAY/PA']) + 
+                                  normalize(df['CAY']) + 
+                                  normalize(df['CAY/PA']) + 
+                                  normalize(df['Lng'])) / 5
+    
+    # Movilidad (Mobility & Scrambling)
+    skills['Mobility'] = (normalize(df['Scrm']) + 
+                          normalize(df['Yds/Scr']) + 
+                          normalize(df['PktTime']) + 
+                          normalize(df['RPO_RushYds'].fillna(0))) / 4
+    
+    # Eficiencia en zona roja (Red Zone Efficiency)
+    skills['Red Zone Efficiency'] = (normalize(df['Inside_20_Cmp%']) + 
+                                     normalize(df['Inside_20_TD']) + 
+                                     normalize(df['Inside_10_Cmp%']) + 
+                                     normalize(df['Inside_10_TD'])) / 4
+    
+    return skills
+
 def display_qb_comparison(qb_data, selected_qb1, selected_qb2):
     # Muestra la comparación de QBs seleccionados.    
     qb1 = selected_qb1
@@ -87,7 +138,7 @@ def display_qb_comparison(qb_data, selected_qb1, selected_qb2):
     stat_labels = ['Atts',"%Completos","Air Yards","Touchdowns","Interceptions","Rating"]
         
     for stat, label in zip(stats, stat_labels):
-        col1, col2, col3 = st.columns([1.5, 2, 1.5])
+        col1, col2, col3 = st.columns([1, 5, 1])
             
         with col1:
             qb_rank_in_stat(qb_data,qb1,stat)
@@ -98,3 +149,14 @@ def display_qb_comparison(qb_data, selected_qb1, selected_qb2):
             
         with col3:
             qb_rank_in_stat(qb_data,qb2,stat)
+
+    c1, c2 = st.columns(2)
+    data_skills = calculate_qb_skills(qb_data)
+    season = qb1_data['Season'].iloc[0]
+
+    with c1:
+        pass
+
+    with c2:
+        fig1 = plot_radar_chart(data_skills, qb1, qb2, season)
+        st.plotly_chart(fig1, use_container_width=True)

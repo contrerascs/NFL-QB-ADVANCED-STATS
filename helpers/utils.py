@@ -1,4 +1,14 @@
 import os
+import pandas as pd
+import numpy as np
+
+def normalize(series):
+    """Normaliza una serie en una escala de 1 a 100."""
+    return 100 * (series - series.min()) / (series.max() - series.min())
+
+def invert_normalize(series):
+    """Normaliza una serie de manera inversa (valores bajos son mejores)."""
+    return 100 - normalize(series)
 
 # Constantes
 TEAM_NAMES = {

@@ -3,7 +3,7 @@ import streamlit as st
 def render_sidebar(df):
     # Renderiza la barra lateral completa.
     with st.sidebar:
-        st.image('assets/sam_logo.png',use_container_width=True)
+        st.image('assets/logo.png',use_container_width=True)
 
         # Obtener lista de QBs
         qb_list = df["Player"].unique().tolist()

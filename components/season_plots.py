@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+import numpy as np
 
 def comparative_plots(qb1,qb2,stat,label,qb_data):
     qb1_data = qb_data[qb_data["Player"] == qb1]
@@ -39,4 +40,44 @@ def comparative_plots(qb1,qb2,stat,label,qb_data):
         margin=dict(l=20, r=20, t=20, b=20),
         )
 
+    return fig
+
+def plot_radar_chart(df, qb1, qb2, season):
+    skills = ["Ball Security", "Passing Efficiency", "Accuracy","Mobility", "Big Plays", "Pocket Performance" , "Red Zone Efficiency"]
+    
+    qb1_stats = df[df["Player"] == qb1][skills].values.flatten()
+    qb2_stats = df[df["Player"] == qb2][skills].values.flatten()
+    
+    categories = skills + [skills[0]]
+    
+    qb1_stats = np.append(qb1_stats, qb1_stats[0])
+    qb2_stats = np.append(qb2_stats, qb2_stats[0])
+    
+    fig = go.Figure()
+    
+    fig.add_trace(go.Scatterpolar(
+        r=qb1_stats,
+        theta=categories,
+        fill='toself',
+        name=qb1,
+        line_color='red'
+    ))
+    
+    fig.add_trace(go.Scatterpolar(
+        r=qb2_stats,
+        theta=categories,
+        fill='toself',
+        name=qb2,
+        line_color='blue'
+    ))
+    
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 100])
+        ),
+        showlegend=True,
+        title=f'Comparación de {qb1} vs {qb2} en {season}',
+        template='plotly_dark'
+    )
+    
     return fig
