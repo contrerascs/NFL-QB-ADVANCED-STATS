@@ -42,7 +42,7 @@ def comparative_plots(qb1,qb2,stat,label,qb_data):
 
     return fig
 
-def plot_radar_chart(df, qb1, qb2, season):
+def plot_radar_chart(df, qb1, qb2):
     skills = ["Ball Security", "Passing Efficiency", "Accuracy","Mobility", "Big Plays", "Pocket Performance" , "Red Zone Efficiency"]
     
     qb1_stats = df[df["Player"] == qb1][skills].values.flatten()
@@ -73,11 +73,47 @@ def plot_radar_chart(df, qb1, qb2, season):
     
     fig.update_layout(
         polar=dict(
-            radialaxis=dict(visible=True, range=[0, 100])
-        ),
-        showlegend=True,
-        title=f'Comparación de {qb1} vs {qb2} en {season}',
+            radialaxis=dict(
+                visible=True, 
+                range=[0, 100])
+            ),
+        showlegend=False,
+        #title=f'Comparación de {qb1} vs {qb2} en {season}',
         template='plotly_dark'
     )
     
+    return fig
+
+def plot_indicator(data,qb,color,reference_value):
+    rate = data['Rate'].iloc[0]
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number+delta",
+        value = rate,
+        delta={'reference': (rate-reference_value)},
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        gauge = {
+            'axis': {'range': [None, 158.3], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'bar': {'color': color},
+            'bgcolor': "white",
+            'borderwidth': 2,
+            'bordercolor': "white",
+            'steps': [
+                {'range': [0, 100], 'color': 'black'},
+                {'range': [100, 158.3], 'color': 'black'}
+            ],
+            'threshold': {
+                #'line': {'color': "red", 'width': 4},
+                'thickness': 0.75,
+                'value': 158.3
+            }
+        }
+    ))
+
+    fig.update_layout(
+        title=f"{qb} Quarterback Rating",
+        template="plotly_dark",
+        width=400,  # Ajusta el ancho en píxeles
+        height=400
+    )
+
     return fig

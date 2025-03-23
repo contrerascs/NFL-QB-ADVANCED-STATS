@@ -3,7 +3,7 @@ import pandas as pd
 
 from helpers.utils import get_image_path
 from helpers.utils import teams
-from components.season_plots import comparative_plots, plot_radar_chart
+from components.season_plots import comparative_plots, plot_radar_chart, plot_indicator
 from helpers.utils import normalize, invert_normalize
 
 def render_player_info(qb_id):
@@ -111,28 +111,27 @@ def display_qb_comparison(qb_data, selected_qb1, selected_qb2):
     # Muestra la comparación de QBs seleccionados.    
     qb1 = selected_qb1
     qb2 = selected_qb2
-    st.header(f'Advanced stats {qb1} and {qb2} since 2018')
+    season = qb_data['Season'].iloc[0]
+    st.header(f'Advanced stats {qb1} and {qb2} in {season}')
 
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3 = st.columns([1,5,1])
 
     with col1:
         qb1_data = qb_data[qb_data["Player"] == qb1]
         qb1_id = qb1_data["Player-additional"].iloc[0]
         render_player_info(qb1_id)
-
-    with col2:
         render_teams_info(qb1_id,qb1_data,qb1,'red')
 
-    with col3:
-        st.image('assets/versus.png', use_container_width=True)
+    with col2:
+        data_skills = calculate_qb_skills(qb_data)
+        fig1 = plot_radar_chart(data_skills, qb1, qb2)
+        st.plotly_chart(fig1, use_container_width=True)
 
-    with col4:
+    with col3:
         qb2_data = qb_data[qb_data["Player"] == qb2]
         qb2_id = qb2_data["Player-additional"].iloc[0]
-        render_teams_info(qb2_id,qb2_data,qb2,'blue')
-
-    with col5:
         render_player_info(qb2_id)
+        render_teams_info(qb2_id,qb2_data,qb2,'blue')
 
     stats = ['Att',"Cmp%","Yds","TD","Int", "Rate"]
     stat_labels = ['Atts',"%Completos","Air Yards","Touchdowns","Interceptions","Rating"]
@@ -151,12 +150,13 @@ def display_qb_comparison(qb_data, selected_qb1, selected_qb2):
             qb_rank_in_stat(qb_data,qb2,stat)
 
     c1, c2 = st.columns(2)
-    data_skills = calculate_qb_skills(qb_data)
-    season = qb1_data['Season'].iloc[0]
 
     with c1:
-        pass
+        delta = calculate_position(qb_data, qb1, 'Rate')
+        fig_indicator1 = plot_indicator(qb1_data,qb1,'red',delta)
+        st.plotly_chart(fig_indicator1, use_container_width=True)
 
     with c2:
-        fig1 = plot_radar_chart(data_skills, qb1, qb2, season)
-        st.plotly_chart(fig1, use_container_width=True)
+        delta = calculate_position(qb_data, qb2, 'Rate')
+        fig_indicator2 = plot_indicator(qb2_data,qb2,'darkblue',delta)
+        st.plotly_chart(fig_indicator2, use_container_width=True)
