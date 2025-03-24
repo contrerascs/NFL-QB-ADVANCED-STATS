@@ -117,3 +117,119 @@ def plot_indicator(data,qb,color,reference_value):
     )
 
     return fig
+
+def bar_plots(df,qb1,qb2):
+    # Definir las métricas de Red Zone
+    red_zone_metrics = [
+        "Inside_20_Att", "Inside_20_Cmp", "Inside_20_Cmp%",
+        "Inside_20_TD", "Inside_10_Att", "Inside_10_Cmp", 
+        "Inside_10_Cmp%", "Inside_10_TD", "Inside_20_Int"
+    ]
+
+    # Crear una lista de nombres formateados para el eje x
+    formatted_metrics = [
+        "Atts Inside 20", "Cmp Inside 20", "Cmp% Inside 20",
+        "TD's Inside 20", "Att Inside 10", "Cmp Inside 10", 
+        "Cmp% Inside 10", "Td's Inside 10", "Ints in Red Zone"
+    ]
+
+    # Extraer datos de los dos QB seleccionados
+    qb1_stats = df[df["Player"] == qb1][red_zone_metrics].values[0]
+    qb2_stats = df[df["Player"] == qb2][red_zone_metrics].values[0]
+
+    # Crear la gráfica de barras
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(
+        x=formatted_metrics,
+        y=qb1_stats,
+        name=qb1,
+        marker_color="red"
+    ))
+
+    fig.add_trace(go.Bar(
+        x=formatted_metrics,
+        y=qb2_stats,
+        name=qb2,
+        marker_color="blue"
+    ))
+
+    # Personalización del diseño
+    fig.update_layout(
+        title=f"Red Zone Performance Comparison: {qb1} vs {qb2}",
+        xaxis_title="Metrics",
+        barmode="group",  # Barras agrupadas
+        legend_title="Quarterbacks"
+    )
+
+    return fig
+
+def stacked_bar(df,qb1,qb2):
+    # Definir métricas de Air Yards
+    air_yds_metrics = ["IAY/PA","CAY/Cmp","CAY/PA","YAC/Cmp"]
+    formatted_metrics = ['Intended Air Yds/Att', 'Completed Air Yds/Cmp', 'Completed Air Yds/Att', 'Yds After Catch/Cmp']
+
+    # Extraer datos de los dos QB seleccionados
+    qb1_stats = df[df["Player"] == qb1][air_yds_metrics].values[0]
+    qb2_stats = df[df["Player"] == qb2][air_yds_metrics].values[0]
+
+    # Crear la gráfica de barras
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(
+        x=formatted_metrics,
+        y=qb1_stats,
+        name=qb1,
+        marker_color="red"
+    ))
+
+    fig.add_trace(go.Bar(
+        x=formatted_metrics,
+        y=qb2_stats,
+        name=qb2,
+        marker_color="blue"
+    ))
+
+    # Personalización del diseño
+    fig.update_layout(
+        title=f"Quarterback Passing Efficiency Metrics: {qb1} vs {qb2}",
+        xaxis_title="Metrics",
+        barmode="group",  # Barras agrupadas
+        legend_title="Quarterbacks"
+    )
+
+    return fig
+
+def plot_indicator_accuracy(data,qb,color,reference_value):
+    rate = data['OnTgt%'].iloc[0]
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number+delta",
+        value = rate,
+        delta={'reference': (rate-reference_value)},
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        gauge = {
+            'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'bar': {'color': color},
+            'bgcolor': "white",
+            'borderwidth': 2,
+            'bordercolor': "white",
+            'steps': [
+                {'range': [0, 100], 'color': 'black'},
+                #{'range': [100, 158.3], 'color': 'black'}
+            ],
+            'threshold': {
+                #'line': {'color': "red", 'width': 4},
+                'thickness': 0.75,
+                'value': 100
+            }
+        }
+    ))
+
+    fig.update_layout(
+        title=f"{qb} On-Target Throw Rate (No Spikes/Throwaways)",
+        template="plotly_dark",
+        width=400,  # Ajusta el ancho en píxeles
+        height=400
+    )
+
+    return fig

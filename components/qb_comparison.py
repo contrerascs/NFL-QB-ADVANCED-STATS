@@ -3,7 +3,7 @@ import pandas as pd
 
 from helpers.utils import get_image_path
 from helpers.utils import teams
-from components.season_plots import comparative_plots, plot_radar_chart, plot_indicator
+from components.season_plots import comparative_plots, plot_radar_chart, plot_indicator, bar_plots, stacked_bar, plot_indicator_accuracy
 from helpers.utils import normalize, invert_normalize
 
 def render_player_info(qb_id):
@@ -160,3 +160,21 @@ def display_qb_comparison(qb_data, selected_qb1, selected_qb2):
         delta = calculate_position(qb_data, qb2, 'Rate')
         fig_indicator2 = plot_indicator(qb2_data,qb2,'darkblue',delta)
         st.plotly_chart(fig_indicator2, use_container_width=True)
+
+    fig_bar = bar_plots(qb_data,qb1,qb2)
+    st.plotly_chart(fig_bar,use_container_width=True)
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        delta = calculate_position(qb_data, qb1, 'OnTgt%')
+        fig_indicator1 = plot_indicator_accuracy(qb1_data,qb1,'red',delta)
+        st.plotly_chart(fig_indicator1, use_container_width=True)
+
+    with c2:
+        delta = calculate_position(qb_data, qb2, 'OnTgt%')
+        fig_indicator2 = plot_indicator_accuracy(qb2_data,qb2,'darkblue',delta)
+        st.plotly_chart(fig_indicator2, use_container_width=True)
+
+    fig_stacked_bar = stacked_bar(qb_data,qb1,qb2)
+    st.plotly_chart(fig_stacked_bar,use_container_width=True)

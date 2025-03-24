@@ -9,7 +9,7 @@ def render_sidebar(df):
         qb_list = df["Player"].unique().tolist()
 
         # Obtener lista de temporadas
-        season_list = ["Since 2018"] + sorted(df["Season"].unique().tolist(), reverse=True)
+        season_list = sorted(df["Season"].unique().tolist(), reverse=True)
 
         # Selección del primer QB
         selected_qb1 = st.selectbox("Selecciona el QB a comparar", qb_list, key='qb1')
