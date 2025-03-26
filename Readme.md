@@ -1,10 +1,10 @@
-NFL QB Advanced Stats
+# NFL QB vs QB Advanced Stats
 
-Overview
+# Overview
 
 NFL QB Advanced Stats is an interactive application that allows users to compare advanced quarterback statistics in the NFL from 2019 to the present. This tool facilitates detailed performance analysis across different seasons, transforming raw data into actionable insights.
 
-Features
+# Features
 
 Quick Comparisons: Compare quarterback statistics with just two clicks.
 
@@ -12,7 +12,7 @@ Interactive Visualizations: Implemented dynamic charts for an intuitive interpre
 
 Data-Driven Insights: Processed raw data into meaningful analytics to enhance decision-making.
 
-Technologies Used
+# Technologies Used
 
 Python for data processing and backend logic.
 
@@ -24,14 +24,14 @@ Selenium for automated data extraction.
 
 Plotly for advanced interactive visualizations.
 
-Try It Out
+# Try It Out
 
 You can access the application here: [NFL QB Advanced Stats](https://nfl-qb-advanced-stats.streamlit.app/)
 
-Data Source
+# Data Source
 
 All data is sourced from [Pro Football Reference](https://www.pro-football-reference.com/).
 
-License
+# License
 
 This project is for educational and analytical purposes only. Please ensure proper attribution when using or sharing insights derived from this application.
